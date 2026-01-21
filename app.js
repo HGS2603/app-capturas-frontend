@@ -255,6 +255,32 @@ function getTurnoById(turno_id) {
 }
 
 function toMinutes(hhmm) {
+
+function isOvernightShift(turno) {
+  const start = toMinutes(turno?.hora_inicio);
+  const end = toMinutes(turno?.hora_fin);
+  if (start === null || end === null) return false;
+  return end <= start; // cruza medianoche
+}
+
+function timeToShiftMinutes(hhmm, turno) {
+  const t = toMinutes(hhmm);
+  const start = toMinutes(turno?.hora_inicio);
+  if (t === null || start === null) return null;
+
+  // Si es turno nocturno y la hora cae antes del inicio, es del día siguiente
+  return isOvernightShift(turno) && t < start ? t + 1440 : t;
+}
+
+function turnoEndShiftMinutes(turno) {
+  const start = toMinutes(turno?.hora_inicio);
+  const end = toMinutes(turno?.hora_fin);
+  if (start === null || end === null) return null;
+
+  return isOvernightShift(turno) ? end + 1440 : end;
+}
+
+  
   const m = String(hhmm || "").match(/^(\d{1,2}):(\d{2})$/);
   if (!m) return null;
   const h = Number(m[1]), mi = Number(m[2]);
@@ -300,8 +326,12 @@ function applyHoraFinMaxFromTurno() {
   const turno = getTurnoById(turno_id);
   if (!turno) return;
 
-  // Max guía UX: no deja seleccionar más allá (en la mayoría de browsers)
-  $("capHoraFin").max = turno.hora_fin || "";
+  if (isOvernightShift(turno)) {
+    // En nocturno NO usamos max porque el input no entiende "día siguiente"
+    $("capHoraFin").removeAttribute("max");
+  } else {
+    $("capHoraFin").max = turno.hora_fin || "";
+  }
 
   // Si ya hay hora fin y está fuera, la recortamos
   const fin = toMinutes($("capHoraFin").value);
@@ -312,24 +342,29 @@ function applyHoraFinMaxFromTurno() {
 }
 
 function validateHorasLive() {
-  const ini = toMinutes($("capHoraInicio").value);
-  const fin = toMinutes($("capHoraFin").value);
+  const turno = getTurnoById($("capTurno").value);
 
-  // Si no están ambas, no molestamos
-  if (ini === null || fin === null) {
+  const iniStr = $("capHoraInicio").value;
+  const finStr = $("capHoraFin").value;
+
+  // Si falta algo, no molestamos
+  if (!turno || !iniStr || !finStr) {
     setAlert($("capMsg"), "", "");
     return true;
   }
+
+  const ini = timeToShiftMinutes(iniStr, turno);
+  const fin = timeToShiftMinutes(finStr, turno);
+  const finTurno = turnoEndShiftMinutes(turno);
+
+  if (ini === null || fin === null || finTurno === null) return true;
 
   if (fin <= ini) {
     setAlert($("capMsg"), "Hora fin debe ser mayor que hora inicio", "bad");
     return false;
   }
 
-  // Validar contra fin de turno si existe
-  const turno = getTurnoById($("capTurno").value);
-  const finTurno = toMinutes(turno?.hora_fin);
-  if (finTurno !== null && fin > finTurno) {
+  if (fin > finTurno) {
     setAlert($("capMsg"), "Hora fin no puede superar la hora fin del turno", "bad");
     return false;
   }
