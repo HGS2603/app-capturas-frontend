@@ -166,6 +166,14 @@ async function init() {
   });
   $("btnBackMenu").addEventListener("click", () => setView("menu"));
 
+ $("capEstatusReportar").addEventListener("change", () => {
+  updateDynamicFields();
+  if (!$("capEstatusActual").value) {
+    $("capEstatusActual").value = $("capEstatusReportar").value;
+  }
+});
+
+  
   // Load users for login
   await loadUsersDropdown();
 
@@ -217,9 +225,51 @@ async function loadCatalogs() {
   setSelectOptions($("capOperador"), data.operadores, "operador_id", "operador_nombre", "Selecciona operador...");
 
   setAlert($("capMsg"), "Catálogos listos ✅", "ok");
-
+  updateDynamicFields();
   return data;
 }
+function normalize(s) {
+  return String(s || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .trim();
+}
+
+function updateDynamicFields() {
+  const sel = $("capEstatusReportar");
+  const text = sel.options[sel.selectedIndex]?.textContent || "";
+  const v = normalize(text);
+
+  const prod = $("prodFields");
+  const paro = $("paroFields");
+
+  // default off
+  show(prod, false);
+  show(paro, false);
+
+  // always clear disabled state first
+  $("capProdOk").disabled = true;
+  $("capScrap").disabled = true;
+  $("capArea").disabled = true;
+  $("capMotivo").disabled = true;
+
+  if (v.includes("produccion") || v.includes("en produccion")) {
+    show(prod, true);
+    $("capProdOk").disabled = false;
+    $("capScrap").disabled = false;
+  } else if (v.includes("cambio") || v.includes("en cambio")) {
+    show(prod, true);
+    // prodFields incluye ProdOk+Scrap, pero aquí solo dejamos Scrap habilitado
+    $("capProdOk").disabled = true;
+    $("capScrap").disabled = false;
+  } else if (v.includes("paro") || v.includes("en paro")) {
+    show(paro, true);
+    $("capArea").disabled = false;
+    $("capMotivo").disabled = false;
+  }
+}
+
 
 function todayLocalISODate() {
   const d = new Date();
