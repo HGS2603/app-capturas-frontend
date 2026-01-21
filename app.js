@@ -235,7 +235,7 @@ async function loadCatalogs() {
   // Estos nombres dependen de tus encabezados en Sheets.
   // Ajustaremos si algún combo queda vacío.
   setSelectOptions($("capSupervisor"), data.supervisores, "supervisor_nombre", "supervisor_nombre", "Selecciona supervisor...");
-  setSelectOptions($("capTurno"), data.turnos, "turno_nombre", "turno_id", "Selecciona turno...");
+  setSelectOptions($("capTurno"), data.turnos, "turno_id", "turno_nombre", "Selecciona turno...");
   setSelectOptions($("capMaquina"), data.maquinas, "maquina_id", "maquina_nombre", "Selecciona máquina...");
   setSelectOptions($("capEstatusReportar"), data.estatus, "estatus_nombre", "estatus_nombre", "Selecciona estatus...");
   setSelectOptions($("capEstatusActual"), data.estatus, "estatus_nombre", "estatus_nombre", "Selecciona estatus...");
