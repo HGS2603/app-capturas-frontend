@@ -214,6 +214,7 @@ async function loadCatalogs() {
   setSelectOptions($("capEstatusActual"), data.estatus, "estatus_id", "estatus_nombre", "Selecciona estatus...");
   setSelectOptions($("capArea"), data.areas, "area_id", "area_nombre", "Selecciona área...");
   setSelectOptions($("capMotivo"), data.motivos, "motivo_id", "motivo_nombre", "Selecciona motivo...");
+  setSelectOptions($("capOperador"), data.operadores, "operador_id", "operador_nombre", "Selecciona operador...");
 
   setAlert($("capMsg"), "Catálogos listos ✅", "ok");
 
