@@ -141,7 +141,12 @@ function doLogout() {
   setAlert($("capMsg"), "", "");
 }
 
-// ===== Init =====
+
+
+
+
+// =============================== Init Inicio ==========================================//
+
 async function init() {
   $("apiUrl").textContent = API_URL;
   $("envInfo").textContent = "Acceso por navegador (responsive)";
@@ -150,65 +155,70 @@ async function init() {
   $("btnReloadUsers").addEventListener("click", loadUsersDropdown);
   $("btnLogout").addEventListener("click", doLogout);
 
- $("btnCapturas").addEventListener("click", async () => {
-  setView("capturas");
-  $("capFecha").value = todayLocalISODate();
+  $("btnCapturas").addEventListener("click", async () => {
+    setView("capturas");
+    $("capFecha").value = todayLocalISODate();
 
-  try {
-    window.__catalogs = await loadCatalogs();
-    applyHoraFinMaxFromTurno();
+    try {
+      window.__catalogs = await loadCatalogs();
+      applyHoraFinMaxFromTurno();
 
-    
-  } catch (e) {
-    setAlert($("capMsg"), e.message, "bad");
-  }
-});
+      // Limpiar solo al entrar a capturas (no al cargar la app)
+      clearCapturasForm();
+      setAlert($("capMsg"), "Formulario listo ✅", "ok");
+    } catch (e) {
+      setAlert($("capMsg"), e.message, "bad");
+    }
+  });
 
   $("btnReportes").addEventListener("click", () => {
     setAlert($("menuMsg"), "Reportes queda pendiente para la siguiente fase.", "");
   });
+
   $("btnBackMenu").addEventListener("click", () => setView("menu"));
 
-$("capEstatusReportar").addEventListener("change", () => {
-  updateDynamicFields();
- // $("capEstatusActual").value = $("capEstatusReportar").value;
-});
-
-
+  $("capEstatusReportar").addEventListener("change", () => {
+    updateDynamicFields();
+  });
 
   $("capFecha").addEventListener("change", () => maybeSuggestHoraInicio());
-$("capTurno").addEventListener("change", () => {
-  applyHoraFinMaxFromTurno();
-  maybeSuggestHoraInicio();
-});
-$("capMaquina").addEventListener("change", () => maybeSuggestHoraInicio());
 
-$("capHoraInicio").addEventListener("change", () => validateHorasLive());
- $("capHoraFin").addEventListener("change", () => validateHorasLive());
+  $("capTurno").addEventListener("change", () => {
+    applyHoraFinMaxFromTurno();
+    maybeSuggestHoraInicio();
+  });
 
-  
-$("btnGuardar").disabled = false;
-$("btnGuardar").addEventListener("click", saveCaptura);
-  clearCapturasForm();
-  setAlert($("capMsg"), "Formulario limpio", "");
+  $("capMaquina").addEventListener("change", () => maybeSuggestHoraInicio());
 
-  
+  $("capHoraInicio").addEventListener("change", () => validateHorasLive());
+  $("capHoraFin").addEventListener("change", () => validateHorasLive());
+
+  // Guardar: solo con botón
+  $("btnGuardar").disabled = false;
+  $("btnGuardar").addEventListener("click", saveCaptura);
+
   // Load users for login
   await loadUsersDropdown();
 
-  // If session exists, go to menu (simple)
+  // Restore session
   const token = getToken();
   if (token) {
-    // We still need perms; ask backend catalogs with token later. For now, keep it simple:
     renderTopbar();
     setView("menu");
     setAlert($("menuMsg"), "Sesión detectada. Si algo falla, vuelve a iniciar sesión.", "");
-    // Disable buttons until we confirm perms (next step)
     applyMenuPermissions({ capturas: true, reportes: false });
   } else {
     setView("login");
   }
 }
+
+
+
+//-----------------------------------Init Fin-----------------------------------------//
+
+
+
+
 function setSelectOptions(selectEl, items, valueKey, labelKey, placeholder = "Selecciona...") {
   selectEl.innerHTML = "";
   const opt0 = document.createElement("option");
