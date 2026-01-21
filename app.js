@@ -150,10 +150,17 @@ async function init() {
   $("btnReloadUsers").addEventListener("click", loadUsersDropdown);
   $("btnLogout").addEventListener("click", doLogout);
 
-  $("btnCapturas").addEventListener("click", () => {
-    setView("capturas");
-    setAlert($("capMsg"), "Siguiente paso: formulario Capturas.", "");
-  });
+ $("btnCapturas").addEventListener("click", async () => {
+  setView("capturas");
+  $("capFecha").value = todayLocalISODate();
+
+  try {
+    window.__catalogs = await loadCatalogs();
+  } catch (e) {
+    setAlert($("capMsg"), e.message, "bad");
+  }
+});
+
   $("btnReportes").addEventListener("click", () => {
     setAlert($("menuMsg"), "Reportes queda pendiente para la siguiente fase.", "");
   });
