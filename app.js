@@ -239,44 +239,53 @@ function normalize(s) {
     .trim();
 }
 
+function hideFieldById(inputId, hide) {
+  const el = $(inputId);
+  if (!el) return;
+  const field = el.parentElement; // en tu HTML, el <select>/<input> está dentro de <label class="field">
+  if (field) field.hidden = !!hide;
+}
+
 function updateDynamicFields() {
   const sel = $("capEstatusReportar");
-  if (!sel) return;
+  if (!sel || sel.selectedIndex < 0) return;
 
   const text = sel.options[sel.selectedIndex]?.textContent || "";
   const v = normalize(text);
 
-  const prod = $("prodFields");
-  const paro = $("paroFields");
+  // Bloques
+  const prodBlock = $("prodFields");
+  const paroBlock = $("paroFields");
 
-  // Ocultar todo por default
-  show(prod, false);
-  show(paro, false);
+  // 1) Ocultar todo por default
+  show(prodBlock, false);
+  show(paroBlock, false);
 
-  // Limpieza preventiva
+  // 2) Asegurar visibilidad base de los campos dentro de prodFields
+  // (por si vienes de "cambio" donde ocultamos Producción OK)
+  hideFieldById("capProdOk", false);
+  hideFieldById("capScrap", false);
+
+  // 3) Limpiar valores cuando se ocultan (para no mandar basura al guardar después)
   $("capProdOk").value = "";
   $("capScrap").value = "";
   $("capArea").value = "";
   $("capMotivo").value = "";
 
-  // Mostrar según estatus
+  // 4) Reglas por estatus
   if (v.includes("produccion")) {
-    // Producción → Prod OK + Scrap
-    show(prod, true);
-  } else if (v.includes("cambio")) {
-    // Cambio → solo Scrap
-    show(prod, true);
-    $("capProdOk").closest(".field").hidden = true;
-    $("capScrap").closest(".field").hidden = false;
-  } else if (v.includes("paro")) {
-    // Paro → Área + Motivo
-    show(paro, true);
-  }
+    // Producción: mostrar ProdOK + Scrap
+    show(prodBlock, true);
 
-  // Reset de visibilidad interna (por si vienes de "cambio")
-  if (v.includes("produccion")) {
-    $("capProdOk").closest(".field").hidden = false;
-    $("capScrap").closest(".field").hidden = false;
+  } else if (v.includes("cambio")) {
+    // Cambio: mostrar SOLO Scrap
+    show(prodBlock, true);
+    hideFieldById("capProdOk", true);   // oculta Producción OK
+    hideFieldById("capScrap", false);   // asegura Scrap visible
+
+  } else if (v.includes("paro")) {
+    // Paro: mostrar Área + Motivo
+    show(paroBlock, true);
   }
 }
 
