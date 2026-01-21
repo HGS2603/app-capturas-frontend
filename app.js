@@ -184,7 +184,7 @@ $("capTurno").addEventListener("change", () => {
 $("capMaquina").addEventListener("change", () => maybeSuggestHoraInicio());
 
 $("capHoraInicio").addEventListener("change", () => validateHorasLive());
-$("capHoraFin").addEventListener("change", () => validateHorasLive());
+//$("capHoraFin").addEventListener("change", () => validateHorasLive());
 
   
 
