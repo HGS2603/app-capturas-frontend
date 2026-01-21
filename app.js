@@ -168,10 +168,9 @@ async function init() {
 
 $("capEstatusReportar").addEventListener("change", () => {
   updateDynamicFields();
-  if (!$("capEstatusActual").value) {
-    $("capEstatusActual").value = $("capEstatusReportar").value;
-  }
+  $("capEstatusActual").value = $("capEstatusReportar").value;
 });
+
 
 
   
