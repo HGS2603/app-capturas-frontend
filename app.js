@@ -255,6 +255,12 @@ function getTurnoById(turno_id) {
 }
 
 function toMinutes(hhmm) {
+  const m = String(hhmm || "").match(/^(\d{1,2}):(\d{2})$/);
+  if (!m) return null;
+  const h = Number(m[1]), mi = Number(m[2]);
+  if (h < 0 || h > 23 || mi < 0 || mi > 59) return null;
+  return h * 60 + mi;
+}
 
 function isOvernightShift(turno) {
   const start = toMinutes(turno?.hora_inicio);
@@ -279,6 +285,7 @@ function turnoEndShiftMinutes(turno) {
 
   return isOvernightShift(turno) ? end + 1440 : end;
 }
+
 
   
   const m = String(hhmm || "").match(/^(\d{1,2}):(\d{2})$/);
@@ -321,25 +328,28 @@ async function maybeSuggestHoraInicio() {
   }
 }
 
+
 function applyHoraFinMaxFromTurno() {
   const turno_id = $("capTurno").value;
   const turno = getTurnoById(turno_id);
   if (!turno) return;
 
   if (isOvernightShift(turno)) {
-    // En nocturno NO usamos max porque el input no entiende "día siguiente"
     $("capHoraFin").removeAttribute("max");
   } else {
     $("capHoraFin").max = turno.hora_fin || "";
   }
 
-  // Si ya hay hora fin y está fuera, la recortamos
-  const fin = toMinutes($("capHoraFin").value);
-  const finTurno = toMinutes(turno.hora_fin);
+  // Si ya hay hora fin y está fuera, la recortamos (con lógica de turno)
+  const fin = timeToShiftMinutes($("capHoraFin").value, turno);
+  const finTurno = turnoEndShiftMinutes(turno);
+
   if (fin !== null && finTurno !== null && fin > finTurno) {
-    $("capHoraFin").value = turno.hora_fin;
+    $("capHoraFin").value = turno.hora_fin; // guía UX
   }
 }
+
+
 
 function validateHorasLive() {
   const turno = getTurnoById($("capTurno").value);
