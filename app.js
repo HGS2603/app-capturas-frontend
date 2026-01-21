@@ -228,42 +228,46 @@ async function loadCatalogs() {
   updateDynamicFields();
   return data;
 }
+
 function normalize(s) {
+  // compatible en todos los navegadores modernos
   return String(s || "")
     .toLowerCase()
     .normalize("NFD")
-    .replace(/\p{Diacritic}/gu, "")
+    .replace(/[\u0300-\u036f]/g, "") // quita acentos (BOM-safe)
     .trim();
 }
 
 function updateDynamicFields() {
   const sel = $("capEstatusReportar");
+  if (!sel) return;
+
   const text = sel.options[sel.selectedIndex]?.textContent || "";
   const v = normalize(text);
 
   const prod = $("prodFields");
   const paro = $("paroFields");
 
-  // default off
+  // Apaga todo por default
   show(prod, false);
   show(paro, false);
 
-  // always clear disabled state first
+  // Deshabilita por default
   $("capProdOk").disabled = true;
   $("capScrap").disabled = true;
   $("capArea").disabled = true;
   $("capMotivo").disabled = true;
 
-  if (v.includes("produccion") || v.includes("en produccion")) {
+  // Decide por texto
+  if (v.includes("produccion")) {
     show(prod, true);
     $("capProdOk").disabled = false;
     $("capScrap").disabled = false;
-  } else if (v.includes("cambio") || v.includes("en cambio")) {
+  } else if (v.includes("cambio")) {
     show(prod, true);
-    // prodFields incluye ProdOk+Scrap, pero aquí solo dejamos Scrap habilitado
     $("capProdOk").disabled = true;
     $("capScrap").disabled = false;
-  } else if (v.includes("paro") || v.includes("en paro")) {
+  } else if (v.includes("paro")) {
     show(paro, true);
     $("capArea").disabled = false;
     $("capMotivo").disabled = false;
