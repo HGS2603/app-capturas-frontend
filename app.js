@@ -184,7 +184,7 @@ $("capTurno").addEventListener("change", () => {
 $("capMaquina").addEventListener("change", () => maybeSuggestHoraInicio());
 
 $("capHoraInicio").addEventListener("change", () => validateHorasLive());
-//$("capHoraFin").addEventListener("change", () => validateHorasLive());
+ $("capHoraFin").addEventListener("change", () => validateHorasLive());
 
   
 
@@ -282,7 +282,7 @@ async function maybeSuggestHoraInicio() {
     setAlert($("capMsg"), `Hora inicio sugerida: ${data.hora_inicio} (${data.source})`, "ok");
 
     // Si hora fin está vacía, la ponemos igual a hora inicio (opcional)
-    if (!$("capHoraFin").value) setTimeInputValue($("capHoraFin"), data.hora_inicio);
+    //if (!$("capHoraFin").value) setTimeInputValue($("capHoraFin"), data.hora_inicio);
 
     // Ajustar límite de hora fin al fin de turno (solo guía UX)
     applyHoraFinMaxFromTurno();
@@ -335,6 +335,90 @@ function validateHorasLive() {
 }
 
 
+function getValue(id) {
+  return $(id)?.value ?? "";
+}
+
+function clearCapturasForm() {
+  // Campos base
+  $("capFecha").value = todayLocalISODate();
+  $("capSupervisor").value = "";
+  $("capTurno").value = "";
+  $("capMaquina").value = "";
+  $("capOperador").value = "";
+  $("capHoraInicio").value = "";
+  $("capHoraFin").value = "";
+  $("capOrden").value = "";
+
+  // Estatus
+  $("capEstatusReportar").value = "";
+  $("capEstatusActual").value = "";
+
+  // Dinámicos
+  $("capProdOk").value = "";
+  $("capScrap").value = "";
+  $("capArea").value = "";
+  $("capMotivo").value = "";
+
+  updateDynamicFields();
+}
+
+async function saveCaptura() {
+  const token = getToken();
+  if (!token) return setAlert($("capMsg"), "Sesión no válida", "bad");
+
+  // Validación mínima frontend
+  const required = [
+    ["capFecha", "Fecha"],
+    ["capSupervisor", "Supervisor"],
+    ["capTurno", "Turno"],
+    ["capMaquina", "Máquina"],
+    ["capOperador", "Operador"],
+    ["capHoraInicio", "Hora inicio"],
+    ["capHoraFin", "Hora fin"],
+    ["capOrden", "Orden"],
+    ["capEstatusReportar", "Estatus a reportar"],
+    ["capEstatusActual", "Estatus actual"]
+  ];
+
+  for (const [id, label] of required) {
+    if (!getValue(id)) {
+      return setAlert($("capMsg"), `Falta ${label}`, "bad");
+    }
+  }
+
+  // Validación horas (reusar)
+  if (!validateHorasLive()) return;
+
+  const payload = {
+    fecha: getValue("capFecha"),
+    supervisor_id: getValue("capSupervisor"),
+    turno_id: getValue("capTurno"),
+    maquina_id: getValue("capMaquina"),
+    operador: getValue("capOperador"),
+    hora_inicio: getValue("capHoraInicio"),
+    hora_fin: getValue("capHoraFin"),
+    orden: Number(getValue("capOrden")),
+    estatus_reportar: getValue("capEstatusReportar"),
+    estatus_actual: getValue("capEstatusActual"),
+
+    // Opcionales / dinámicos
+    produccion_ok: getValue("capProdOk"),
+    scrap: getValue("capScrap"),
+    area_responsable_id: getValue("capArea"),
+    motivo_paro_id: getValue("capMotivo")
+  };
+
+  setAlert($("capMsg"), "Guardando...", "");
+
+  try {
+    await apiPost("/api/capturas/save", payload, token);
+    setAlert($("capMsg"), "Registro guardado ✅", "ok");
+    clearCapturasForm();
+  } catch (e) {
+    setAlert($("capMsg"), e.message, "bad");
+  }
+}
 
 
 
