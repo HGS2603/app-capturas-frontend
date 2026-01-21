@@ -293,7 +293,7 @@ function turnoEndShiftMinutes(turno) {
   const h = Number(m[1]), mi = Number(m[2]);
   if (h < 0 || h > 23 || mi < 0 || mi > 59) return null;
   return h * 60 + mi;
-}
+
 
 function setTimeInputValue(el, hhmm) {
   // input type="time" espera HH:MM
