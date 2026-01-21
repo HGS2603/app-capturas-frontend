@@ -262,8 +262,10 @@ function updateDynamicFields() {
 
   // 2) Asegurar visibilidad base de los campos dentro de prodFields
   // (por si vienes de "cambio" donde ocultamos Producción OK)
-  hideFieldById("capProdOk", false);
-  hideFieldById("capScrap", false);
+   hideFieldById("capScrap", true);   // asegura Scrap visible
+   hideFieldById("capProdOk", true);   // asegura Producción OK
+   hideFieldById("capArea", true);   // asegura Scrap visible
+   hideFieldById("capMotivo", true);   // asegura Scrap visible
 
   // 3) Limpiar valores cuando se ocultan (para no mandar basura al guardar después)
   $("capProdOk").value = "";
@@ -273,18 +275,24 @@ function updateDynamicFields() {
 
   // 4) Reglas por estatus
   if (v.includes("produccion")) {
-    // Producción: mostrar ProdOK + Scrap
-    show(prodBlock, true);
+   hideFieldById("capScrap", false);   // asegura Scrap visible
+   hideFieldById("capProdOk", false);   // asegura Producción OK
+   hideFieldById("capArea", true);   // asegura Scrap visible
+   hideFieldById("capMotivo", true);   // asegura Scrap visible
 
   } else if (v.includes("cambio")) {
     // Cambio: mostrar SOLO Scrap
-    show(prodBlock, true);
-    hideFieldById("capProdOk", true);   // oculta Producción OK
-    hideFieldById("capScrap", false);   // asegura Scrap visible
+   hideFieldById("capScrap", false);   // asegura Scrap visible
+   hideFieldById("capProdOk", true);   // asegura Producción OK
+   hideFieldById("capArea", true);   // asegura Scrap visible
+   hideFieldById("capMotivo", true);   // asegura Scrap visible
 
   } else if (v.includes("paro")) {
     // Paro: mostrar Área + Motivo
-    show(paroBlock, true);
+   hideFieldById("capScrap", true);   // asegura Scrap visible
+   hideFieldById("capProdOk", true);   // asegura Producción OK
+   hideFieldById("capArea", false);   // asegura Scrap visible
+   hideFieldById("capMotivo", false);   // asegura Scrap visible
   }
 }
 
