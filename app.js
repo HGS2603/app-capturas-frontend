@@ -236,7 +236,7 @@ async function loadCatalogs() {
   // Ajustaremos si algún combo queda vacío.
   setSelectOptions($("capSupervisor"), data.supervisores, "supervisor_nombre", "supervisor_nombre", "Selecciona supervisor...");
   setSelectOptions($("capTurno"), data.turnos, "turno_nombre", "turno_id", "Selecciona turno...");
-  setSelectOptions($("capMaquina"), data.maquinas, "maquina_nombre", "maquina_nombre", "Selecciona máquina...");
+  setSelectOptions($("capMaquina"), data.maquinas, "maquina_id", "maquina_nombre", "Selecciona máquina...");
   setSelectOptions($("capEstatusReportar"), data.estatus, "estatus_nombre", "estatus_nombre", "Selecciona estatus...");
   setSelectOptions($("capEstatusActual"), data.estatus, "estatus_nombre", "estatus_nombre", "Selecciona estatus...");
   setSelectOptions($("capArea"), data.areas, "area_nombre", "area_nombre", "Selecciona área...");
