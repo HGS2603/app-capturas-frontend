@@ -264,7 +264,7 @@ function getTurnoById(turno_id) {
   return turnos.find(t => String(t.turno_id) === String(turno_id)) || null;
 }
 
-
+/////////////////////////////////////////////////////////////////
 
 function toMinutes(hhmm) {
   const m = String(hhmm || "").match(/^(\d{1,2}):(\d{2})$/);
@@ -285,7 +285,6 @@ function timeToShiftMinutes(hhmm, turno) {
   const t = toMinutes(hhmm);
   const start = toMinutes(turno?.hora_inicio);
   if (t === null || start === null) return null;
-
   return isOvernightShift(turno) && t < start ? t + 1440 : t;
 }
 
@@ -293,18 +292,14 @@ function turnoEndShiftMinutes(turno) {
   const start = toMinutes(turno?.hora_inicio);
   const end = toMinutes(turno?.hora_fin);
   if (start === null || end === null) return null;
-
   return isOvernightShift(turno) ? end + 1440 : end;
 }
 
 
 
+//////////////////////////////////////////////////
   
-  const m = String(hhmm || "").match(/^(\d{1,2}):(\d{2})$/);
-  if (!m) return null;
-  const h = Number(m[1]), mi = Number(m[2]);
-  if (h < 0 || h > 23 || mi < 0 || mi > 59) return null;
-  return h * 60 + mi;
+ 
 
 
 function setTimeInputValue(el, hhmm) {
