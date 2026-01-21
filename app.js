@@ -171,7 +171,7 @@ async function init() {
 
 $("capEstatusReportar").addEventListener("change", () => {
   updateDynamicFields();
-  $("capEstatusActual").value = $("capEstatusReportar").value;
+ // $("capEstatusActual").value = $("capEstatusReportar").value;
 });
 
 
@@ -235,13 +235,13 @@ async function loadCatalogs() {
   // Estos nombres dependen de tus encabezados en Sheets.
   // Ajustaremos si algún combo queda vacío.
   setSelectOptions($("capSupervisor"), data.supervisores, "supervisor_nombre", "supervisor_nombre", "Selecciona supervisor...");
-  setSelectOptions($("capTurno"), data.turnos, "turno_id", "turno_nombre", "Selecciona turno...");
-  setSelectOptions($("capMaquina"), data.maquinas, "maquina_id", "maquina_nombre", "Selecciona máquina...");
-  setSelectOptions($("capEstatusReportar"), data.estatus, "estatus_id", "estatus_nombre", "Selecciona estatus...");
-  setSelectOptions($("capEstatusActual"), data.estatus, "estatus_id", "estatus_nombre", "Selecciona estatus...");
-  setSelectOptions($("capArea"), data.areas, "area_id", "area_nombre", "Selecciona área...");
-  setSelectOptions($("capMotivo"), data.motivos, "motivo_id", "motivo_nombre", "Selecciona motivo...");
-  setSelectOptions($("capOperador"), data.operadores, "operador_id", "operador_nombre", "Selecciona operador...");
+  setSelectOptions($("capTurno"), data.turnos, "turno_nombre", "turno_nombre", "Selecciona turno...");
+  setSelectOptions($("capMaquina"), data.maquinas, "maquina_nombre", "maquina_nombre", "Selecciona máquina...");
+  setSelectOptions($("capEstatusReportar"), data.estatus, "estatus_nombre", "estatus_nombre", "Selecciona estatus...");
+  setSelectOptions($("capEstatusActual"), data.estatus, "estatus_nombre", "estatus_nombre", "Selecciona estatus...");
+  setSelectOptions($("capArea"), data.areas, "area_nombre", "area_nombre", "Selecciona área...");
+  setSelectOptions($("capMotivo"), data.motivos, "motivo_nombre", "motivo_nombre", "Selecciona motivo...");
+  setSelectOptions($("capOperador"), data.operadores, "operador_nombre", "operador_nombre", "Selecciona operador...");
 
   setAlert($("capMsg"), "Catálogos listos ✅", "ok");
   updateDynamicFields();
@@ -346,8 +346,8 @@ function getValue(id) {
 function clearCapturasForm() {
   // Campos base
   $("capFecha").value = todayLocalISODate();
-  $("capSupervisor").value = "";
-  $("capTurno").value = "";
+  //$("capSupervisor").value = "";
+  //$("capTurno").value = "";
   $("capMaquina").value = "";
   $("capOperador").value = "";
   $("capHoraInicio").value = "";
