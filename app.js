@@ -254,6 +254,8 @@ function getTurnoById(turno_id) {
   return turnos.find(t => String(t.turno_id) === String(turno_id)) || null;
 }
 
+
+
 function toMinutes(hhmm) {
   const m = String(hhmm || "").match(/^(\d{1,2}):(\d{2})$/);
   if (!m) return null;
@@ -274,7 +276,6 @@ function timeToShiftMinutes(hhmm, turno) {
   const start = toMinutes(turno?.hora_inicio);
   if (t === null || start === null) return null;
 
-  // Si es turno nocturno y la hora cae antes del inicio, es del día siguiente
   return isOvernightShift(turno) && t < start ? t + 1440 : t;
 }
 
@@ -285,6 +286,7 @@ function turnoEndShiftMinutes(turno) {
 
   return isOvernightShift(turno) ? end + 1440 : end;
 }
+
 
 
   
