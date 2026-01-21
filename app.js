@@ -187,7 +187,11 @@ $("capHoraInicio").addEventListener("change", () => validateHorasLive());
  $("capHoraFin").addEventListener("change", () => validateHorasLive());
 
   
-
+$("btnGuardar").disabled = false;
+$("btnGuardar").addEventListener("click", saveCaptura);
+  clearCapturasForm();
+  setAlert($("capMsg"), "Formulario limpio", "");
+});
   
   // Load users for login
   await loadUsersDropdown();
