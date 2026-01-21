@@ -175,5 +175,50 @@ async function init() {
     setView("login");
   }
 }
+function setSelectOptions(selectEl, items, valueKey, labelKey, placeholder = "Selecciona...") {
+  selectEl.innerHTML = "";
+  const opt0 = document.createElement("option");
+  opt0.value = "";
+  opt0.textContent = placeholder;
+  selectEl.appendChild(opt0);
+
+  for (const it of items || []) {
+    const opt = document.createElement("option");
+    opt.value = it[valueKey] ?? "";
+    opt.textContent = it[labelKey] ?? it[valueKey] ?? "";
+    selectEl.appendChild(opt);
+  }
+}
+
+async function loadCatalogs() {
+  const token = getToken();
+  if (!token) throw new Error("No hay sesión");
+
+  setAlert($("capMsg"), "Cargando catálogos...", "");
+
+  const data = await apiGet("/api/catalogs", token);
+
+  // Estos nombres dependen de tus encabezados en Sheets.
+  // Ajustaremos si algún combo queda vacío.
+  setSelectOptions($("capSupervisor"), data.supervisores, "supervisor_id", "supervisor_nombre", "Selecciona supervisor...");
+  setSelectOptions($("capTurno"), data.turnos, "turno_id", "turno_nombre", "Selecciona turno...");
+  setSelectOptions($("capMaquina"), data.maquinas, "maquina_id", "maquina_nombre", "Selecciona máquina...");
+  setSelectOptions($("capEstatusReportar"), data.estatus, "estatus_id", "estatus_nombre", "Selecciona estatus...");
+  setSelectOptions($("capEstatusActual"), data.estatus, "estatus_id", "estatus_nombre", "Selecciona estatus...");
+  setSelectOptions($("capArea"), data.areas, "area_id", "area_nombre", "Selecciona área...");
+  setSelectOptions($("capMotivo"), data.motivos, "motivo_id", "motivo_nombre", "Selecciona motivo...");
+
+  setAlert($("capMsg"), "Catálogos listos ✅", "ok");
+
+  return data;
+}
+
+function todayLocalISODate() {
+  const d = new Date();
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+}
 
 init();
