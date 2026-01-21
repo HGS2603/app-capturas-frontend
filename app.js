@@ -173,6 +173,18 @@ $("capEstatusReportar").addEventListener("change", () => {
 
 
 
+  $("capFecha").addEventListener("change", () => maybeSuggestHoraInicio());
+$("capTurno").addEventListener("change", () => {
+  applyHoraFinMaxFromTurno();
+  maybeSuggestHoraInicio();
+});
+$("capMaquina").addEventListener("change", () => maybeSuggestHoraInicio());
+
+$("capHoraInicio").addEventListener("change", () => validateHorasLive());
+$("capHoraFin").addEventListener("change", () => validateHorasLive());
+
+  
+
   
   // Load users for login
   await loadUsersDropdown();
@@ -228,6 +240,100 @@ async function loadCatalogs() {
   updateDynamicFields();
   return data;
 }
+
+
+function getTurnoById(turno_id) {
+  const turnos = window.__catalogs?.turnos || [];
+  return turnos.find(t => String(t.turno_id) === String(turno_id)) || null;
+}
+
+function toMinutes(hhmm) {
+  const m = String(hhmm || "").match(/^(\d{1,2}):(\d{2})$/);
+  if (!m) return null;
+  const h = Number(m[1]), mi = Number(m[2]);
+  if (h < 0 || h > 23 || mi < 0 || mi > 59) return null;
+  return h * 60 + mi;
+}
+
+function setTimeInputValue(el, hhmm) {
+  // input type="time" espera HH:MM
+  el.value = hhmm || "";
+}
+
+async function maybeSuggestHoraInicio() {
+  const fecha = $("capFecha").value;
+  const turno_id = $("capTurno").value;
+  const maquina_id = $("capMaquina").value;
+
+  // Solo cuando están los 3
+  if (!fecha || !turno_id || !maquina_id) return;
+
+  const token = getToken();
+  if (!token) return;
+
+  setAlert($("capMsg"), "Calculando hora inicio...", "");
+
+  try {
+    const data = await apiPost("/api/capturas/suggest-start", { fecha, turno_id, maquina_id }, token);
+    setTimeInputValue($("capHoraInicio"), data.hora_inicio);
+    setAlert($("capMsg"), `Hora inicio sugerida: ${data.hora_inicio} (${data.source})`, "ok");
+
+    // Si hora fin está vacía, la ponemos igual a hora inicio (opcional)
+    if (!$("capHoraFin").value) setTimeInputValue($("capHoraFin"), data.hora_inicio);
+
+    // Ajustar límite de hora fin al fin de turno (solo guía UX)
+    applyHoraFinMaxFromTurno();
+  } catch (e) {
+    setAlert($("capMsg"), e.message, "bad");
+  }
+}
+
+function applyHoraFinMaxFromTurno() {
+  const turno_id = $("capTurno").value;
+  const turno = getTurnoById(turno_id);
+  if (!turno) return;
+
+  // Max guía UX: no deja seleccionar más allá (en la mayoría de browsers)
+  $("capHoraFin").max = turno.hora_fin || "";
+
+  // Si ya hay hora fin y está fuera, la recortamos
+  const fin = toMinutes($("capHoraFin").value);
+  const finTurno = toMinutes(turno.hora_fin);
+  if (fin !== null && finTurno !== null && fin > finTurno) {
+    $("capHoraFin").value = turno.hora_fin;
+  }
+}
+
+function validateHorasLive() {
+  const ini = toMinutes($("capHoraInicio").value);
+  const fin = toMinutes($("capHoraFin").value);
+
+  // Si no están ambas, no molestamos
+  if (ini === null || fin === null) {
+    setAlert($("capMsg"), "", "");
+    return true;
+  }
+
+  if (fin <= ini) {
+    setAlert($("capMsg"), "Hora fin debe ser mayor que hora inicio", "bad");
+    return false;
+  }
+
+  // Validar contra fin de turno si existe
+  const turno = getTurnoById($("capTurno").value);
+  const finTurno = toMinutes(turno?.hora_fin);
+  if (finTurno !== null && fin > finTurno) {
+    setAlert($("capMsg"), "Hora fin no puede superar la hora fin del turno", "bad");
+    return false;
+  }
+
+  setAlert($("capMsg"), "", "");
+  return true;
+}
+
+
+
+
 
 function normalize(s) {
   // compatible en todos los navegadores modernos
