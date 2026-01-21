@@ -166,12 +166,13 @@ async function init() {
   });
   $("btnBackMenu").addEventListener("click", () => setView("menu"));
 
- $("capEstatusReportar").addEventListener("change", () => {
+$("capEstatusReportar").addEventListener("change", () => {
   updateDynamicFields();
   if (!$("capEstatusActual").value) {
     $("capEstatusActual").value = $("capEstatusReportar").value;
   }
 });
+
 
   
   // Load users for login
