@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>APP Capturas Producción</title>
+  <title>APP Produccion PCN</title>
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
   <header class="topbar">
     <div class="brand">
-      <div class="logo">ACP</div>
+      <div class="logo">HGS</div>
       <div>
-        <div class="title">APP Capturas Producción</div>
+        <div class="title">APP Produccion PCN</div>
         <div class="subtitle" id="envInfo"></div>
       </div>
     </div>
@@ -63,19 +63,95 @@
       <div class="alert" id="menuMsg" hidden></div>
     </section>
 
-    <!-- CAPTURAS (placeholder por ahora) -->
-    <section class="card" id="viewCapturas" hidden>
-      <div class="row-between">
-        <h2>Capturas</h2>
-        <button class="btn btn-outline" id="btnBackMenu">Volver</button>
-      </div>
+    <!-- CAPTURAS -->
+<section class="card" id="viewCapturas" hidden>
+  <div class="row-between">
+    <h2>Capturas</h2>
+    <button class="btn btn-outline" id="btnBackMenu">Volver</button>
+  </div>
 
-      <p class="muted">
-        Siguiente paso: aquí construiremos el formulario dinámico y guardado en Sheets.
-      </p>
+  <div class="grid">
+    <label class="field">
+      <span>Fecha</span>
+      <input id="capFecha" type="date" />
+    </label>
 
-      <div class="alert" id="capMsg" hidden></div>
-    </section>
+    <label class="field">
+      <span>Supervisor</span>
+      <select id="capSupervisor"></select>
+    </label>
+
+    <label class="field">
+      <span>Turno</span>
+      <select id="capTurno"></select>
+    </label>
+
+    <label class="field">
+      <span>Máquina</span>
+      <select id="capMaquina"></select>
+    </label>
+
+    <label class="field">
+      <span>Operador</span>
+      <input id="capOperador" type="text" placeholder="Nombre operador" />
+    </label>
+
+    <label class="field">
+      <span>Hora inicio</span>
+      <input id="capHoraInicio" type="time" />
+    </label>
+
+    <label class="field">
+      <span>Hora fin</span>
+      <input id="capHoraFin" type="time" />
+    </label>
+
+    <label class="field">
+      <span>Orden</span>
+      <input id="capOrden" type="number" inputmode="numeric" />
+    </label>
+
+    <label class="field">
+      <span>Estatus a reportar</span>
+      <select id="capEstatusReportar"></select>
+    </label>
+
+    <label class="field">
+      <span>Estatus actual</span>
+      <select id="capEstatusActual"></select>
+    </label>
+  </div>
+
+  <div class="grid" id="prodFields" hidden>
+    <label class="field">
+      <span>Producción OK</span>
+      <input id="capProdOk" type="number" inputmode="numeric" />
+    </label>
+    <label class="field">
+      <span>Scrap</span>
+      <input id="capScrap" type="number" inputmode="numeric" />
+    </label>
+  </div>
+
+  <div class="grid" id="paroFields" hidden>
+    <label class="field">
+      <span>Área responsable</span>
+      <select id="capArea"></select>
+    </label>
+    <label class="field">
+      <span>Motivo de paro</span>
+      <select id="capMotivo"></select>
+    </label>
+  </div>
+
+  <div class="actions">
+    <button class="btn" id="btnGuardar" disabled>Guardar (siguiente paso)</button>
+    <button class="btn btn-outline" id="btnLimpiar" disabled>Limpiar (siguiente paso)</button>
+  </div>
+
+  <div class="alert" id="capMsg" hidden></div>
+</section>
+
 
     <footer class="footer">
       <span class="muted">API:</span>
