@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>APP Capturas Producción</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">ACP</div>
+      <div>
+        <div class="title">APP Capturas Producción</div>
+        <div class="subtitle" id="envInfo"></div>
+      </div>
+    </div>
+    <div class="userbox" id="userBox" hidden>
+      <div class="usertext">
+        <div class="username" id="userName"></div>
+        <div class="userrole" id="userPerms"></div>
+      </div>
+      <button class="btn btn-outline" id="btnLogout">Salir</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- LOGIN -->
+    <section class="card" id="viewLogin">
+      <h2>Iniciar sesión</h2>
+      <p class="muted">Selecciona tu usuario y escribe tu contraseña.</p>
+
+      <div class="grid">
+        <label class="field">
+          <span>Usuario</span>
+          <select id="loginUsuario"></select>
+        </label>
+
+        <label class="field">
+          <span>Password</span>
+          <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Tu password" />
+        </label>
+      </div>
+
+      <div class="actions">
+        <button class="btn" id="btnLogin">Entrar</button>
+        <button class="btn btn-outline" id="btnReloadUsers">Recargar usuarios</button>
+      </div>
+
+      <div class="alert" id="loginMsg" hidden></div>
+    </section>
+
+    <!-- MENU -->
+    <section class="card" id="viewMenu" hidden>
+      <h2>Menú</h2>
+      <p class="muted">Selecciona una opción. Los botones dependen de tus permisos.</p>
+
+      <div class="menu">
+        <button class="btn" id="btnCapturas">Capturas</button>
+        <button class="btn btn-outline" id="btnReportes">Reportes (pendiente)</button>
+      </div>
+
+      <div class="alert" id="menuMsg" hidden></div>
+    </section>
+
+    <!-- CAPTURAS (placeholder por ahora) -->
+    <section class="card" id="viewCapturas" hidden>
+      <div class="row-between">
+        <h2>Capturas</h2>
+        <button class="btn btn-outline" id="btnBackMenu">Volver</button>
+      </div>
+
+      <p class="muted">
+        Siguiente paso: aquí construiremos el formulario dinámico y guardado en Sheets.
+      </p>
+
+      <div class="alert" id="capMsg" hidden></div>
+    </section>
+
+    <footer class="footer">
+      <span class="muted">API:</span>
+      <code id="apiUrl"></code>
+    </footer>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
