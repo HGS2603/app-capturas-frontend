@@ -249,29 +249,34 @@ function updateDynamicFields() {
   const prod = $("prodFields");
   const paro = $("paroFields");
 
-  // Apaga todo por default
+  // Ocultar todo por default
   show(prod, false);
   show(paro, false);
 
-  // Deshabilita por default
-  $("capProdOk").disabled = true;
-  $("capScrap").disabled = true;
-  $("capArea").disabled = true;
-  $("capMotivo").disabled = true;
+  // Limpieza preventiva
+  $("capProdOk").value = "";
+  $("capScrap").value = "";
+  $("capArea").value = "";
+  $("capMotivo").value = "";
 
-  // Decide por texto
+  // Mostrar según estatus
   if (v.includes("produccion")) {
+    // Producción → Prod OK + Scrap
     show(prod, true);
-    $("capProdOk").disabled = false;
-    $("capScrap").disabled = false;
   } else if (v.includes("cambio")) {
+    // Cambio → solo Scrap
     show(prod, true);
-    $("capProdOk").disabled = true;
-    $("capScrap").disabled = false;
+    $("capProdOk").closest(".field").hidden = true;
+    $("capScrap").closest(".field").hidden = false;
   } else if (v.includes("paro")) {
+    // Paro → Área + Motivo
     show(paro, true);
-    $("capArea").disabled = false;
-    $("capMotivo").disabled = false;
+  }
+
+  // Reset de visibilidad interna (por si vienes de "cambio")
+  if (v.includes("produccion")) {
+    $("capProdOk").closest(".field").hidden = false;
+    $("capScrap").closest(".field").hidden = false;
   }
 }
 
