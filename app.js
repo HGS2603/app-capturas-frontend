@@ -156,6 +156,9 @@ async function init() {
 
   try {
     window.__catalogs = await loadCatalogs();
+    applyHoraFinMaxFromTurno();
+
+    
   } catch (e) {
     setAlert($("capMsg"), e.message, "bad");
   }
