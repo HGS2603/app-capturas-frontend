@@ -123,6 +123,7 @@ async function doLogin() {
 
     renderTopbar();
     applyMenuPermissions(data.perms);
+    
     $("loginPassword").value = "";
     setView("menu");
     setAlert($("menuMsg"), "Listo ✅", "ok");
@@ -321,15 +322,37 @@ async function maybeSuggestHoraInicio() {
   setAlert($("capMsg"), "Calculando hora inicio...", "");
 
   try {
-    const data = await apiPost("/api/capturas/suggest-start", { fecha, turno_id, maquina_id }, token);
-    setTimeInputValue($("capHoraInicio"), data.hora_inicio);
-    setAlert($("capMsg"), `Hora inicio sugerida: ${data.hora_inicio} (${data.source})`, "ok");
+    
+   const data = await apiPost(
+  "/api/capturas/suggest-start",
+  { fecha, turno_id, maquina_id },
+  token
+);
 
-    // Si hora fin está vacía, la ponemos igual a hora inicio (opcional)
-    //if (!$("capHoraFin").value) setTimeInputValue($("capHoraFin"), data.hora_inicio);
+// 1) Hora inicio sugerida
+setTimeInputValue($("capHoraInicio"), data.hora_inicio);
 
-    // Ajustar límite de hora fin al fin de turno (solo guía UX)
-    applyHoraFinMaxFromTurno();
+// 2) Estatus a reportar = último estatus_actual del turno+maquina (si existe)
+if (data.last_estatus_actual) {
+  $("capEstatusReportar").value = data.last_estatus_actual;
+  updateDynamicFields(); // para que oculte/muestre campos correctos
+
+  // Opcional: también precargar estatus actual
+  // $("capEstatusActual").value = data.last_estatus_actual;
+}
+
+// Mensaje
+const extra = data.last_estatus_actual ? ` | Último estatus: ${data.last_estatus_actual}` : "";
+setAlert(
+  $("capMsg"),
+  `Hora inicio sugerida: ${data.hora_inicio} (${data.source})${extra}`,
+  "ok"
+);
+
+// Ajustar límite/validación de hora fin
+applyHoraFinMaxFromTurno();
+
+    
   } catch (e) {
     setAlert($("capMsg"), e.message, "bad");
   }
